@@ -11,8 +11,8 @@ dubbo:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/spring6
-    password: root
+    url: jdbc:mysql://123.207.201.195:3306/bookkeeping
+    password: jnhfj@2009
     username: root
     hikari:
       #设置事务自动提交
