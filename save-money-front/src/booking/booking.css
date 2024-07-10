@@ -1,0 +1,6 @@
+.addBooking {
+    position: fixed;
+    bottom: 20px; /* 距离底部的距离 */
+    right: 20px; /* 距离右边的距离 */
+    z-index: 1000; /* 确保按钮在其他元素之上 */
+}
