@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
-import {Button, Form, Input, InputNumber, TreeSelect} from 'antd';
+import {Button, Form, Input, InputNumber, TreeSelect, Divider, Modal} from 'antd';
+import api from '../api'
+import TxType from "./txType";
 
-const txType = [
+const txTypeData = [
   {
     value: 'food',
     title: '餐饮',
@@ -59,6 +61,7 @@ const tailFormItemLayout = {
 };
 const Outcome = ({onClose}) => {
   const [treeValue, setValue] = useState();
+  const [modalOpen2, setModalOpen2] = useState(false);
 
   const onChange = (newValue) => {
     console.log(newValue);
@@ -67,10 +70,35 @@ const Outcome = ({onClose}) => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
+
     onClose();
   };
 
+  const dropdownRender = (txTypeData) => (
+    <div>
+      {txTypeData}
+      <Divider
+        style={{
+          margin: 0,
+        }}
+      />
+      <div
+        style={{
+          padding: 8,
+        }}
+      >
+        {/*The footer is not very short.*/}
+        <Button type="primary" onClick={() => setModalOpen2(true)}>
+        新增分类
+        </Button>
+      </div>
+    </div>
+  )
+
+
+
   return (
+    <div>
     <Form
       {...formItemLayout}
       form={form}
@@ -101,7 +129,8 @@ const Outcome = ({onClose}) => {
           dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
           allowClear
           onChange={onChange}
-          treeData={txType}
+          treeData={txTypeData}
+          dropdownRender={dropdownRender}
         />
       </Form.Item>
 
@@ -167,6 +196,11 @@ const Outcome = ({onClose}) => {
         </Button>
       </Form.Item>
     </Form>
+      <Modal title="分类管理" open={modalOpen2} maskClosable={false} onOk={() => setModalOpen2(false)}
+             onCancel={() => setModalOpen2(false)}>
+        <TxType></TxType>
+      </Modal>
+    </div>
   );
 };
 export default Outcome;

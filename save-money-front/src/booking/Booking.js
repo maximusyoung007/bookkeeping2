@@ -16,7 +16,10 @@ const Booking = () => {
         centered
         open={modal2Open}
         onOk={() => setModal2Open(false)}
-        onCancel={() => setModal2Open(false)}
+        onCancel={() => {
+          setModal2Open(false)
+          console.log("第一层modal状态：", modal2Open)
+        }}
       >
         <AddBooking onClose={() => setModal2Open(false)}></AddBooking>
       </Modal>

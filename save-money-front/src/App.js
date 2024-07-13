@@ -5,6 +5,7 @@ import Booking from "./booking/Booking";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import {Layout, Menu} from 'antd';
 import React, {useState} from 'react';
+import SubType from "./booking/subTxType";
 
 const {Header, Content, Footer, Sider} = Layout;
 
@@ -48,6 +49,7 @@ const App = () => {
           <Route exact path="/Account" element={<Account/>}/>
           <Route exact path="/Booking" element={<Booking/>}/>
           <Route exact path="/" element={<Booking/>}/>
+          <Route exact path="/subTxType/:txType" element={<SubType/>}/>
         </Routes>
       </Layout>
     </Layout>
