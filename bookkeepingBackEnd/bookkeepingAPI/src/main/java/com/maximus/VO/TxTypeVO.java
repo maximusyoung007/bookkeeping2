@@ -15,4 +15,6 @@ public class TxTypeVO {
 
     private Boolean isLeaf;
 
+    private Integer kind;
+
 }

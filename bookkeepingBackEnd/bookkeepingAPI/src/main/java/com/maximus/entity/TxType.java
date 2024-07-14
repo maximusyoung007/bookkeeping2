@@ -19,4 +19,6 @@ public class TxType {
      */
     private Integer isLeaf;
 
+    private Integer kind;
+
 }

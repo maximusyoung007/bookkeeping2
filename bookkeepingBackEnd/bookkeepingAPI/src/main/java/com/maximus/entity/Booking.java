@@ -28,10 +28,10 @@ public class Booking {
     private String goods;
 
     //收/支，0-收 1-支
-    private String inorout;
+    private Integer inorout;
 
     //金额
-    private Long amount;
+    private Double amount;
 
     //账户号码，2024年7月之前的数据只存档，不关联到账户信息上
     private String accountNo;

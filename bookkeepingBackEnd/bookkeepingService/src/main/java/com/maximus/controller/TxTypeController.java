@@ -1,7 +1,6 @@
 package com.maximus.controller;
 
 import com.maximus.VO.TxTypeVO;
-import com.maximus.dao.BaseDAO;
 import com.maximus.dao.TxTypeDAO;
 import com.maximus.entity.Result;
 import com.maximus.entity.TxType;
@@ -10,7 +9,6 @@ import com.maximus.service.TxTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/txType")
 public class TxTypeController {
-    protected static Logger logger = LoggerFactory.getLogger(BaseDAO.class);
+    protected static Logger logger = LoggerFactory.getLogger(TxTypeController.class);
 
     @Resource
     private TxTypeService txTypeService;
@@ -49,6 +47,7 @@ public class TxTypeController {
                 txType.setFatherId(txTypeVO.getFatherId());
                 txType.setIsLeaf(1);
                 txType.setName(txTypeVO.getSubName());
+                txType.setKind(1);
                 int count = txTypeService.addType(txType);
                 if (count == 1) {
                     return Result.success("插入成功");
@@ -57,39 +56,64 @@ public class TxTypeController {
                 TxType txType = new TxType();
                 TxType subTxType = new TxType();
 
-                txType.setId(UUID.randomUUID().toString());
-                txType.setName(txTypeVO.getName());
-                txType.setIsLeaf(0);
+                String name = txTypeVO.getName();
+                Map<String, Object> map = new HashMap<>();
+                map.put("name", name);
+                txType = txTypeMapper.selectByMap(map).get(0);
 
-                subTxType.setId(UUID.randomUUID().toString());
-                subTxType.setFatherId(txType.getId());
-                subTxType.setName(txTypeVO.getSubName());
-                subTxType.setIsLeaf(1);
+                if (txType == null) {
+                    txType.setId(UUID.randomUUID().toString());
+                    txType.setName(txTypeVO.getName());
+                    txType.setIsLeaf(0);
+                    txType.setKind(1);
 
-                try {
-                    int count = txTypeDAO.addTxType(txType, subTxType);
+                    subTxType.setId(UUID.randomUUID().toString());
+                    subTxType.setFatherId(txType.getId());
+                    subTxType.setName(txTypeVO.getSubName());
+                    subTxType.setIsLeaf(1);
+                    subTxType.setKind(1);
 
-                    if (count == 2) {
+                    try {
+                        int count = txTypeDAO.addTxType(txType, subTxType);
+
+                        if (count == 2) {
+                            return Result.success("插入成功");
+                        }
+                    } catch (Exception e) {
+                        logger.error("数据库异常", e);
+                    }
+                } else {
+                    subTxType.setId(UUID.randomUUID().toString());
+                    subTxType.setFatherId(txType.getFatherId());
+                    subTxType.setIsLeaf(1);
+                    subTxType.setName(txTypeVO.getSubName());
+                    subTxType.setKind(1);
+                    int count = txTypeService.addType(subTxType);
+                    if (count == 1) {
                         return Result.success("插入成功");
                     }
-                } catch (Exception e) {
-                    logger.error("数据库异常", e);
                 }
             }
         } catch (DuplicateKeyException dke) {
+            logger.info("分类名称重复", dke);
             return Result.fail(2001, "分类名称重复");
         } catch (Exception e) {
+            logger.info("系统异常", e);
             return Result.fail(2001, e.toString());
         }
 
         return null;
     }
 
-    @GetMapping("getTxType")
-    public Result getTxType() {
+    @PostMapping("getTxType")
+    public Result getTxType(@RequestBody TxTypeVO txTypeVO) {
         Map<String, Object> map = new HashMap<>();
-        map.put("isLeaf", false);
+        if (txTypeVO.getIsLeaf() != null) {
+            map.put("is_leaf", txTypeVO.getIsLeaf());
+        }
+        map.put("kind", txTypeVO.getKind());
         List<TxType> typeList = txTypeMapper.selectByMap(map);
+
         return Result.success(typeList);
     }
 }

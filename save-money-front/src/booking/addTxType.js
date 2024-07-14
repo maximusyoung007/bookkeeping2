@@ -10,10 +10,11 @@ const AddTxType = (props) => {
         name: values.name,
         subName: values.subName,
         isLeaf: isLeaf,
-        fatherId: fatherId
+        fatherId: fatherId,
+        kind: 1
     }).then(function (response) {
       console.log("response:", response);
-      if (response.data.code == '2000') {
+      if (response.code == '2000') {
         message.success({
           content: '新增分类成功',
         }).then(() => closeModal());

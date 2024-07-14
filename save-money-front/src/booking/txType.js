@@ -1,31 +1,25 @@
-import {Avatar, Divider, List, Skeleton, Button, Modal} from 'antd';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import {List, Button, Modal} from 'antd';
 import React, {useEffect, useState,} from 'react';
-import { useNavigate } from 'react-router-dom';
-import OutCome from './outcome'
 import SubTxType from "./subTxType";
 import AddTxType from "./addTxType";
+import api from "../api"
 
 const TxType = () => {
-  const data = [
-    {email: 't1', name:'Racing '},
-    {email: 't2', name:'Japanese'},
-    {email: 't3', name: 'Australian '},
-    {email:'t4', name:'Man '},
-    {email: 't5', name:'Los '},
-    {email: 't1', name:'Racing '},
-    {email: 't2', name:'Japanese'},
-    {email: 't3', name: 'Australian '},
-    {email:'t4', name:'Man '},
-    {email: 't5', name:'Los '},
-    {email: 't1', name:'Racing '},
-    {email: 't2', name:'Japanese'},
-    {email: 't3', name: 'Australian '},
-    {email:'t4', name:'Man '},
-    {email: 't5', name:'Los '}
-  ];
+  const [data, setData] = useState();
 
-  const navigate = useNavigate();
+  //useEffect第2个数组为空，则可以只执行一次
+  useEffect(() => {
+    console.log("进来啦");
+    api.post("/txType/getTxType", {
+      kind: 1,
+      isLeaf: 0
+    }).then(function (response) {
+      // setData(response.data[0]);
+      console.log(response);
+      console.log(response.data[0])
+      setData(response.data)
+    })
+  }, [])
 
   const [modalOpen3, setModalOpen3] = useState(false);
   const [addTxTypeModal, setAddTxTypeModal] = useState(false);
@@ -49,11 +43,11 @@ const TxType = () => {
             renderItem={(item) => (
 
               <List.Item
-                key={item.email}
+                key={item.id}
                 actions={[
                   <Button type="link">编辑</Button>,
                   <Button type="link" onClick={() => {
-                    setFatherTxType(item.email)
+                    setFatherTxType(item.id)
                     setModalOpen3(true)}
                   }>详情</Button>,
                   <Button type="link" danger>删除</Button>

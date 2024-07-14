@@ -1,34 +1,8 @@
-import React, {useState} from 'react';
-import {Button, Form, Input, InputNumber, TreeSelect, Divider, Modal} from 'antd';
-import api from '../api'
+import React, {useEffect, useState} from 'react';
+import {Button, Form, Input, InputNumber, TreeSelect, Divider, Modal, DatePicker, message} from 'antd';
 import TxType from "./txType";
+import api from "../api";
 
-const txTypeData = [
-  {
-    value: 'food',
-    title: '餐饮',
-    children: [
-      {
-        value: 'meal',
-        title: '三餐',
-      },
-    ],
-  },
-  {
-    value: 'study',
-    title: '学习',
-    children: [
-      {
-        value: 'books',
-        title: '书籍',
-      },
-      {
-        value: 'class',
-        title: '培训班'
-      }
-    ],
-  },
-];
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -60,6 +34,48 @@ const tailFormItemLayout = {
   },
 };
 const Outcome = ({onClose}) => {
+
+  let categories = [];
+  let subCategories = [];
+  // let txTypeData = [];
+
+  const [txTypeData, setTxTypeData] = useState()
+
+  useEffect(() => {
+    console.log("txTypeUseEffect");
+    api.post("/txType/getTxType", {
+      kind: 1,
+    }).then(function (response) {
+      // setData(response.data[0]);
+      console.log(response);
+      console.log(response.data[0])
+      //setData(response.data)
+      let dataArray = response.data;
+      dataArray.forEach(function (item) {
+        if (item.id == item.fatherId) {
+          categories.push({value: item.id, title: item.name})
+        } else {
+          subCategories.push({value: item.id, title: item.name, parent: item.fatherId})
+        }
+      })
+      const temp = categories.reduce((acc, category) => {
+        // 查找属于该分类的所有子分类
+        const children = subCategories.filter(subCategory => subCategory.parent === category.value);
+
+        // 将子分类添加到顶级分类的children属性下
+        acc.push({
+          ...category,
+          children,
+        });
+
+        return acc;
+      }, []);
+      console.log(categories)
+      console.log(subCategories)
+      console.log("txType2:" + txTypeData)
+      setTxTypeData(temp)
+    })
+  }, [])
   const [treeValue, setValue] = useState();
   const [modalOpen2, setModalOpen2] = useState(false);
 
@@ -69,9 +85,26 @@ const Outcome = ({onClose}) => {
   };
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
-
-    onClose();
+    api.post("/booking/addBooking", {
+      txType: values.txType,
+      accountNumber: values.accountNumber,
+      amount: values.amount,
+      counterparty: values.counterparty,
+      goodsName: values.goodsName,
+      date: values['date-picker'].format('YYYYMMDD'),
+    }).then(function (response) {
+      console.log("response:", response);
+      if (response.code == '2000') {
+        message.success({
+          content: '记账成功',
+        }).then(() => onClose());
+      }
+    }).catch(function (error) {
+      message.error("请求异常：" + error);
+    })
+    // console.log('Received values of form: ', values);
+    // console.log(values['date-picker'].format('YYYY-MM-DD'));
+    // onClose();
   };
 
   const dropdownRender = (txTypeData) => (
@@ -190,11 +223,24 @@ const Outcome = ({onClose}) => {
         <Input/>
       </Form.Item>
 
+      <Form.Item name="date-picker" label="DatePicker"
+                 rules={[
+                   {
+                     type: 'object',
+                     required: true,
+                     message: 'Please select time!',
+                   },
+                 ]}
+      >
+        <DatePicker />
+      </Form.Item>
+
       <Form.Item {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
           Register
         </Button>
       </Form.Item>
+
     </Form>
       <Modal title="分类管理" open={modalOpen2} maskClosable={false} onOk={() => setModalOpen2(false)}
              onCancel={() => setModalOpen2(false)}>

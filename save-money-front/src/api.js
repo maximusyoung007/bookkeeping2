@@ -3,7 +3,7 @@ import axios from "axios"
 // 创建一个 Axios 实例
 const instance = axios.create({
   baseURL: "", // 设置基本URL
-  timeout: 5000, // 设置超时时间
+  timeout: 50000, // 设置超时时间
   headers: {
     "Access-Control-Allow-Origin" : "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -28,8 +28,8 @@ instance.interceptors.request.use(
 // 添加响应拦截器
 instance.interceptors.response.use(
   (response) => {
-    // 对响应数据做一些处理，比如解析响应结果
-    return response
+    // 返回具体数据
+    return response.data
   },
   (error) => {
     // 对响应错误做些什么
