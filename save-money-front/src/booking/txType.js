@@ -4,14 +4,15 @@ import SubTxType from "./subTxType";
 import AddTxType from "./addTxType";
 import api from "../api"
 
-const TxType = () => {
+const TxType = (props) => {
+  const {kind} = props
   const [data, setData] = useState();
 
   //useEffect第2个数组为空，则可以只执行一次
   useEffect(() => {
     console.log("进来啦");
     api.post("/txType/getTxType", {
-      kind: 1,
+      kind: kind,
       isLeaf: 0
     }).then(function (response) {
       // setData(response.data[0]);
@@ -66,7 +67,7 @@ const TxType = () => {
         </Modal>
         <Modal title="新增分类" open={addTxTypeModal} onOk={() => setAddTxTypeModal(false)}
                onCancel={() => setAddTxTypeModal(false)}>
-          <AddTxType isLeaf={false} fatherName={""} closeModal={() => setAddTxTypeModal(false)}></AddTxType>
+          <AddTxType isLeaf={false} fatherName={""} closeModal={() => setAddTxTypeModal(false)} kind={kind}></AddTxType>
         </Modal>
       </div>
       <div><Button onClick={() => setAddTxTypeModal(true)}>新增分类</Button></div>

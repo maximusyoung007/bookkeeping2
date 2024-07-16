@@ -6,6 +6,7 @@ import com.maximus.entity.Result;
 import com.maximus.entity.TxType;
 import com.maximus.mapper.TxTypeMapper;
 import com.maximus.service.TxTypeService;
+import org.apache.dubbo.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -47,7 +48,7 @@ public class TxTypeController {
                 txType.setFatherId(txTypeVO.getFatherId());
                 txType.setIsLeaf(1);
                 txType.setName(txTypeVO.getSubName());
-                txType.setKind(1);
+                txType.setKind(txTypeVO.getKind());
                 int count = txTypeService.addType(txType);
                 if (count == 1) {
                     return Result.success("插入成功");
@@ -59,35 +60,42 @@ public class TxTypeController {
                 String name = txTypeVO.getName();
                 Map<String, Object> map = new HashMap<>();
                 map.put("name", name);
-                txType = txTypeMapper.selectByMap(map).get(0);
+                List<TxType> txTypeList = txTypeMapper.selectByMap(map);
 
-                if (txType == null) {
+                if (txTypeList == null || txTypeList.isEmpty()) {
                     txType.setId(UUID.randomUUID().toString());
                     txType.setName(txTypeVO.getName());
                     txType.setIsLeaf(0);
-                    txType.setKind(1);
+                    txType.setKind(txTypeVO.getKind());
 
-                    subTxType.setId(UUID.randomUUID().toString());
-                    subTxType.setFatherId(txType.getId());
-                    subTxType.setName(txTypeVO.getSubName());
-                    subTxType.setIsLeaf(1);
-                    subTxType.setKind(1);
+                    if (StringUtils.isNotEmpty(txTypeVO.getSubName())) {
+                        subTxType.setId(UUID.randomUUID().toString());
+                        subTxType.setFatherId(txType.getId());
+                        subTxType.setName(txTypeVO.getSubName());
+                        subTxType.setIsLeaf(1);
+                        subTxType.setKind(txTypeVO.getKind());
 
-                    try {
-                        int count = txTypeDAO.addTxType(txType, subTxType);
+                        try {
+                            int count = txTypeDAO.addTxType(txType, subTxType);
 
-                        if (count == 2) {
+                            if (count == 2) {
+                                return Result.success("插入成功");
+                            }
+                        } catch (Exception e) {
+                            logger.error("数据库异常", e);
+                        }
+                    } else {
+                        int count = txTypeService.addType(txType);
+                        if (count == 1) {
                             return Result.success("插入成功");
                         }
-                    } catch (Exception e) {
-                        logger.error("数据库异常", e);
                     }
                 } else {
                     subTxType.setId(UUID.randomUUID().toString());
                     subTxType.setFatherId(txType.getFatherId());
                     subTxType.setIsLeaf(1);
                     subTxType.setName(txTypeVO.getSubName());
-                    subTxType.setKind(1);
+                    subTxType.setKind(txTypeVO.getKind());
                     int count = txTypeService.addType(subTxType);
                     if (count == 1) {
                         return Result.success("插入成功");

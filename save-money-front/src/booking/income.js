@@ -33,7 +33,7 @@ const tailFormItemLayout = {
     },
   },
 };
-const Outcome = ({onClose}) => {
+const InCome = ({onClose}) => {
 
   let categories = [];
   let subCategories = [];
@@ -44,7 +44,7 @@ const Outcome = ({onClose}) => {
   useEffect(() => {
     console.log("txTypeUseEffect");
     api.post("/txType/getTxType", {
-      kind: 1,
+      kind: 0,
     }).then(function (response) {
       // setData(response.data[0]);
       console.log(response);
@@ -122,7 +122,7 @@ const Outcome = ({onClose}) => {
       >
         {/*The footer is not very short.*/}
         <Button type="primary" onClick={() => setModalOpen2(true)}>
-        新增分类
+          新增分类
         </Button>
       </div>
     </div>
@@ -132,121 +132,121 @@ const Outcome = ({onClose}) => {
 
   return (
     <div>
-    <Form
-      {...formItemLayout}
-      form={form}
-      name="register"
-      onFinish={onFinish}
-      initialValues={{
-        prefix: '86',
-      }}
-      style={{
-        maxWidth: 600,
-      }}
-      scrollToFirstError
-    >
-      <Form.Item
-        name="txType"
-        label="类型"
-        rules={[
-          {
-            required: true,
-            message: '请选择你的支出类型',
-          },
-        ]}
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="register"
+        onFinish={onFinish}
+        initialValues={{
+          prefix: '86',
+        }}
+        style={{
+          maxWidth: 600,
+        }}
+        scrollToFirstError
       >
-        <TreeSelect
-          showSearch
-          style={{width: '100%'}}
-          value={treeValue}
-          dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-          allowClear
-          onChange={onChange}
-          treeData={txTypeData}
-          dropdownRender={dropdownRender}
-        />
-      </Form.Item>
+        <Form.Item
+          name="txType"
+          label="类型"
+          rules={[
+            {
+              required: true,
+              message: '请选择你的支出类型',
+            },
+          ]}
+        >
+          <TreeSelect
+            showSearch
+            style={{width: '100%'}}
+            value={treeValue}
+            dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+            allowClear
+            onChange={onChange}
+            treeData={txTypeData}
+            dropdownRender={dropdownRender}
+          />
+        </Form.Item>
 
-      <Form.Item
-        name="counterparty"
-        label="交易对方"
-        rules={[
-          {
-            required: true,
-            message: '请输入你的交易对方',
-            whitespace: true,
-          },
-        ]}
-      >
-        <Input/>
-      </Form.Item>
+        <Form.Item
+          name="counterparty"
+          label="交易对方"
+          rules={[
+            {
+              required: true,
+              message: '请输入你的交易对方',
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input/>
+        </Form.Item>
 
-      <Form.Item
-        name="amount"
-        label="金额"
-        rules={[
-          {
-            required: true,
-            message: '金额（单位元）',
-            whitespace: true,
-          },
-        ]}
-      >
-        <InputNumber min="0" step="0.01" stringMode/>
-      </Form.Item>
+        <Form.Item
+          name="amount"
+          label="金额"
+          rules={[
+            {
+              required: true,
+              message: '金额（单位元）',
+              whitespace: true,
+            },
+          ]}
+        >
+          <InputNumber min="0" step="0.01" stringMode/>
+        </Form.Item>
 
-      <Form.Item
-        name="accountNumber"
-        label="账户号码"
-        rules={[
-          {
-            required: true,
-            message: '请输入这笔支出的账户',
-            whitespace: true,
-          },
-        ]}
-      >
-        <Input/>
-      </Form.Item>
+        <Form.Item
+          name="accountNumber"
+          label="账户号码"
+          rules={[
+            {
+              required: true,
+              message: '请输入这笔支出的账户',
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input/>
+        </Form.Item>
 
-      <Form.Item
-        name="goodsName"
-        label="商品名称"
-        rules={[
-          {
-            required: true,
-            message: '请输入商品名称',
-            whitespace: true,
-          },
-        ]}
-      >
-        <Input/>
-      </Form.Item>
+        <Form.Item
+          name="goodsName"
+          label="商品名称"
+          rules={[
+            {
+              required: true,
+              message: '请输入商品名称',
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input/>
+        </Form.Item>
 
-      <Form.Item name="date-picker" label="DatePicker"
-                 rules={[
-                   {
-                     type: 'object',
-                     required: true,
-                     message: 'Please select time!',
-                   },
-                 ]}
-      >
-        <DatePicker />
-      </Form.Item>
+        <Form.Item name="date-picker" label="DatePicker"
+                   rules={[
+                     {
+                       type: 'object',
+                       required: true,
+                       message: 'Please select time!',
+                     },
+                   ]}
+        >
+          <DatePicker />
+        </Form.Item>
 
-      <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
-          Register
-        </Button>
-      </Form.Item>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            Register
+          </Button>
+        </Form.Item>
 
-    </Form>
+      </Form>
       <Modal title="分类管理" open={modalOpen2} maskClosable={false} onOk={() => setModalOpen2(false)}
              onCancel={() => setModalOpen2(false)}>
-        <TxType kind={1}></TxType>
+        <TxType kind={0}></TxType>
       </Modal>
     </div>
   );
 };
-export default Outcome;
+export default InCome;

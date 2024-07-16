@@ -18,4 +18,8 @@ public class BookingVO {
     private String goodsName;
 
     private String txType;
+
+    private String txTypeName;
+
+    private int inOrOut;
 }

@@ -3,7 +3,7 @@ import React from 'react';
 import api from "../api"
 
 const AddTxType = (props) => {
-  const { isLeaf, fatherName, fatherId, closeModal } = props;
+  const { isLeaf, fatherName, fatherId, closeModal, kind } = props;
   const onFinish = (values) => {
     console.log('Success:', values);
     api.post("/txType/addTxType", {
@@ -11,7 +11,7 @@ const AddTxType = (props) => {
         subName: values.subName,
         isLeaf: isLeaf,
         fatherId: fatherId,
-        kind: 1
+        kind: kind
     }).then(function (response) {
       console.log("response:", response);
       if (response.code == '2000') {

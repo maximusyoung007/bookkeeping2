@@ -3,4 +3,11 @@
     bottom: 20px; /* 距离底部的距离 */
     right: 20px; /* 距离右边的距离 */
     z-index: 1000; /* 确保按钮在其他元素之上 */
+
+}
+
+.site-calendar-demo-card {
+    width: 100%;
+    border: 1px solid #f0f0f0;
+    border-radius: 2px;
 }
