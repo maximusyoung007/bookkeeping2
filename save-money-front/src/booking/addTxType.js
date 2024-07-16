@@ -55,12 +55,6 @@ const AddTxType = (props) => {
       <Form.Item
         label="二级分类名称"
         name="subName"
-        rules={[
-          {
-            required: true,
-            message: '请输入二级分类名称',
-          },
-        ]}
       >
         <Input />
       </Form.Item>

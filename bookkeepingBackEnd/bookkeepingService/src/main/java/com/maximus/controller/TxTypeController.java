@@ -1,5 +1,6 @@
 package com.maximus.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.maximus.VO.TxTypeVO;
 import com.maximus.dao.TxTypeDAO;
 import com.maximus.entity.Result;
@@ -38,37 +39,66 @@ public class TxTypeController {
     @Resource
     private TxTypeMapper txTypeMapper;
 
+    /**
+     * 1,只有type, type存在，donothing；type不存在，insert type
+     * 2,有type和subType，
+     * type存在，subType不存在；存subType
+     * type存在，subType存在；donothing
+     * type不存在，subType不存在；insert type, subType
+     * type不存在，subType存在  ,这种情况一定是新增的type不等于subType已有的父type，抛异常
+     * @param txTypeVO
+     * @return
+     */
     @PostMapping("addTxType")
     public Result addTxType(@RequestBody TxTypeVO txTypeVO) {
         try {
             //叶子节点直接保存
-            if (txTypeVO.getIsLeaf()) {
+            QueryWrapper<TxType> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("name", txTypeVO.getName());
+            boolean isTxTypeExist = txTypeMapper.exists(queryWrapper);
+            if (StringUtils.isEmpty(txTypeVO.getSubName())) {
+                if (isTxTypeExist) {
+                    return Result.fail(2001, "分类已存在");
+                }
                 TxType txType = new TxType();
                 txType.setId(UUID.randomUUID().toString());
-                txType.setFatherId(txTypeVO.getFatherId());
-                txType.setIsLeaf(1);
-                txType.setName(txTypeVO.getSubName());
+                txType.setFatherId(txType.getFatherId());
+                txType.setIsLeaf(0);
+                txType.setName(txTypeVO.getName());
                 txType.setKind(txTypeVO.getKind());
                 int count = txTypeService.addType(txType);
                 if (count == 1) {
                     return Result.success("插入成功");
                 }
             } else {
-                TxType txType = new TxType();
-                TxType subTxType = new TxType();
+                QueryWrapper<TxType> queryWrapper1 = new QueryWrapper<>();
+                queryWrapper1.eq("name", txTypeVO.getSubName());
+                boolean isSubTypeExist = txTypeMapper.exists(queryWrapper1);
 
-                String name = txTypeVO.getName();
-                Map<String, Object> map = new HashMap<>();
-                map.put("name", name);
-                List<TxType> txTypeList = txTypeMapper.selectByMap(map);
-
-                if (txTypeList == null || txTypeList.isEmpty()) {
-                    txType.setId(UUID.randomUUID().toString());
-                    txType.setName(txTypeVO.getName());
-                    txType.setIsLeaf(0);
-                    txType.setKind(txTypeVO.getKind());
-
-                    if (StringUtils.isNotEmpty(txTypeVO.getSubName())) {
+                TxType txType = null;
+                TxType subTxType = null;
+                if (isTxTypeExist) {
+                    txType = txTypeMapper.selectOne(queryWrapper);
+                    if (!isSubTypeExist) {
+                        subTxType.setId(UUID.randomUUID().toString());
+                        subTxType.setFatherId(txType.getFatherId());
+                        subTxType.setIsLeaf(1);
+                        subTxType.setName(txTypeVO.getSubName());
+                        subTxType.setKind(txTypeVO.getKind());
+                        int count = txTypeService.addType(subTxType);
+                        if (count == 1) {
+                            return Result.success("插入成功");
+                        }
+                    } else {
+                        return Result.fail(2001, "分类已存在");
+                    }
+                } else {
+                    if (!isSubTypeExist) {
+                        txType.setId(UUID.randomUUID().toString());
+                        txType.setFatherId(txType.getId());
+                        txType.setName(txTypeVO.getName());
+                        txType.setIsLeaf(0);
+                        txType.setKind(txTypeVO.getKind());
                         subTxType.setId(UUID.randomUUID().toString());
                         subTxType.setFatherId(txType.getId());
                         subTxType.setName(txTypeVO.getSubName());
@@ -85,20 +115,7 @@ public class TxTypeController {
                             logger.error("数据库异常", e);
                         }
                     } else {
-                        int count = txTypeService.addType(txType);
-                        if (count == 1) {
-                            return Result.success("插入成功");
-                        }
-                    }
-                } else {
-                    subTxType.setId(UUID.randomUUID().toString());
-                    subTxType.setFatherId(txType.getFatherId());
-                    subTxType.setIsLeaf(1);
-                    subTxType.setName(txTypeVO.getSubName());
-                    subTxType.setKind(txTypeVO.getKind());
-                    int count = txTypeService.addType(subTxType);
-                    if (count == 1) {
-                        return Result.success("插入成功");
+                        return Result.fail(2001, "新增分类与二级分类已有父分类冲突");
                     }
                 }
             }
