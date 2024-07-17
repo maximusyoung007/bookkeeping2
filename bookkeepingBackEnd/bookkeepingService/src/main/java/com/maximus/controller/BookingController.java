@@ -75,7 +75,7 @@ public class BookingController {
         }
         booking.setCounterparty(vo.getCounterparty());
         booking.setGoods(vo.getGoodsName());
-        booking.setInorout(1);
+        booking.setInorout(vo.getInOrOut());
         booking.setAmount(vo.getAmount());
         booking.setAccountNo(vo.getAccountNumber());
 

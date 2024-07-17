@@ -92,6 +92,7 @@ const InCome = ({onClose}) => {
       counterparty: values.counterparty,
       goodsName: values.goodsName,
       date: values['date-picker'].format('YYYYMMDD'),
+      inOrOut: 0
     }).then(function (response) {
       console.log("response:", response);
       if (response.code == '2000') {

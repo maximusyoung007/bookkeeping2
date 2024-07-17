@@ -91,6 +91,7 @@ const Outcome = ({onClose}) => {
       amount: values.amount,
       counterparty: values.counterparty,
       goodsName: values.goodsName,
+      inOrOut: 1,
       date: values['date-picker'].format('YYYYMMDD'),
     }).then(function (response) {
       console.log("response:", response);
