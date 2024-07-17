@@ -1,6 +1,7 @@
 package com.maximus.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.maximus.SystemEnvironment;
 import com.maximus.VO.TxTypeVO;
 import com.maximus.dao.TxTypeDAO;
 import com.maximus.entity.Result;
@@ -68,6 +69,9 @@ public class TxTypeController {
                 txType.setKind(txTypeVO.getKind());
                 int count = txTypeService.addType(txType);
                 if (count == 1) {
+                    if (!SystemEnvironment.TX_TYPE_MAP.containsKey(txType.getId())) {
+                        SystemEnvironment.TX_TYPE_MAP.put(txType.getId(), txType.getName());
+                    }
                     return Result.success("插入成功");
                 }
             } else {
@@ -75,8 +79,8 @@ public class TxTypeController {
                 queryWrapper1.eq("name", txTypeVO.getSubName());
                 boolean isSubTypeExist = txTypeMapper.exists(queryWrapper1);
 
-                TxType txType = null;
-                TxType subTxType = null;
+                TxType txType = new TxType();
+                TxType subTxType = new TxType();
                 if (isTxTypeExist) {
                     txType = txTypeMapper.selectOne(queryWrapper);
                     if (!isSubTypeExist) {
@@ -87,6 +91,9 @@ public class TxTypeController {
                         subTxType.setKind(txTypeVO.getKind());
                         int count = txTypeService.addType(subTxType);
                         if (count == 1) {
+                            if (!SystemEnvironment.TX_TYPE_MAP.containsKey(subTxType.getId())) {
+                                SystemEnvironment.TX_TYPE_MAP.put(subTxType.getId(), subTxType.getName());
+                            }
                             return Result.success("插入成功");
                         }
                     } else {
@@ -109,6 +116,12 @@ public class TxTypeController {
                             int count = txTypeDAO.addTxType(txType, subTxType);
 
                             if (count == 2) {
+                                if (!SystemEnvironment.TX_TYPE_MAP.containsKey(txType.getId())) {
+                                    SystemEnvironment.TX_TYPE_MAP.put(txType.getId(), txType.getName());
+                                }
+                                if (!SystemEnvironment.TX_TYPE_MAP.containsKey(subTxType.getId())) {
+                                    SystemEnvironment.TX_TYPE_MAP.put(subTxType.getId(), subTxType.getName());
+                                }
                                 return Result.success("插入成功");
                             }
                         } catch (Exception e) {
