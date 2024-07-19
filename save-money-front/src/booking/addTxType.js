@@ -3,7 +3,7 @@ import React from 'react';
 import api from "../api"
 
 const AddTxType = (props) => {
-  const { isLeaf, fatherName, fatherId, closeModal, kind } = props;
+  const { isLeaf, fatherName, fatherId, closeModal, kind, onTypeChange, typeChangeValue } = props;
   const onFinish = (values) => {
     console.log('Success:', values);
     api.post("/txType/addTxType", {
@@ -15,6 +15,8 @@ const AddTxType = (props) => {
     }).then(function (response) {
       console.log("response:", response);
       if (response.code == '2000') {
+        //传typeChangeValue进来，再通过onTypeChange修改
+        onTypeChange(!typeChangeValue)
         message.success({
           content: '新增分类成功',
         }).then(() => closeModal());

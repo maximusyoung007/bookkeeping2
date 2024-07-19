@@ -8,6 +8,13 @@ const TxType = (props) => {
   const {kind} = props
   const [data, setData] = useState();
 
+  //增加元素后，修改typeChange
+  const [typeChange, setTypeChange] = useState(false);
+
+  const handleTypeChange = (value) => {
+    console.log("handleTypeChange:" + value);
+    setTypeChange(value)
+  }
   //useEffect第2个数组为空，则可以只执行一次
   useEffect(() => {
     console.log("进来啦");
@@ -20,7 +27,7 @@ const TxType = (props) => {
       console.log(response.data[0])
       setData(response.data)
     })
-  }, [])
+  }, [typeChange])
 
   const [modalOpen3, setModalOpen3] = useState(false);
   const [addTxTypeModal, setAddTxTypeModal] = useState(false);
@@ -67,7 +74,8 @@ const TxType = (props) => {
         </Modal>
         <Modal title="新增分类" open={addTxTypeModal} onOk={() => setAddTxTypeModal(false)}
                onCancel={() => setAddTxTypeModal(false)}>
-          <AddTxType isLeaf={false} fatherName={""} closeModal={() => setAddTxTypeModal(false)} kind={kind}></AddTxType>
+          <AddTxType isLeaf={false} fatherName={""} closeModal={() => setAddTxTypeModal(false)}
+                      kind={kind} onTypeChange={handleTypeChange} typeChangeValue={typeChange}></AddTxType>
         </Modal>
       </div>
       <div><Button onClick={() => setAddTxTypeModal(true)}>新增分类</Button></div>
