@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, InputNumber, TreeSelect, Divider, Modal, DatePicker, message} from 'antd';
+import {Button, Form, Input, InputNumber, TreeSelect, Divider, Modal, DatePicker, message, Select} from 'antd';
 import TxType from "./txType";
 import api from "../api";
 
@@ -39,7 +39,9 @@ const Outcome = ({onClose}) => {
   let subCategories = [];
   // let txTypeData = [];
 
-  const [txTypeData, setTxTypeData] = useState()
+  const [txTypeData, setTxTypeData] = useState();
+  let options = [{value:"000", label:"默认不关联账户"}];
+  const [accountList, setAccountList] = useState();
 
   useEffect(() => {
     console.log("txTypeUseEffect");
@@ -75,6 +77,18 @@ const Outcome = ({onClose}) => {
       console.log("txType2:" + txTypeData)
       setTxTypeData(temp)
     })
+
+    api.post("/account/getAccount", {
+
+    }).then(function (response) {
+      console.log("获得账户信息")
+      console.log(response.data);
+      response.data.list.forEach(function (item) {
+        options.push({value: item.accountNo, label: item.accountName})
+      })
+      setAccountList(options)
+    })
+
   }, [])
   const [treeValue, setValue] = useState();
   const [modalOpen2, setModalOpen2] = useState(false);
@@ -83,11 +97,17 @@ const Outcome = ({onClose}) => {
     console.log(newValue);
     setValue(newValue);
   };
+  const onAccountChange = (value) => {
+    console.log(`selected ${value}`);
+  };
+  const onAccountSearch = (value) => {
+    console.log('search:', value);
+  };
   const [form] = Form.useForm();
   const onFinish = (values) => {
     api.post("/booking/addBooking", {
       txType: values.txType,
-      accountNumber: values.accountNumber,
+      accountNo: values.accountNumber,
       amount: values.amount,
       counterparty: values.counterparty,
       goodsName: values.goodsName,
@@ -198,7 +218,7 @@ const Outcome = ({onClose}) => {
 
       <Form.Item
         name="accountNumber"
-        label="账户号码"
+        label="账户"
         rules={[
           {
             required: true,
@@ -207,7 +227,16 @@ const Outcome = ({onClose}) => {
           },
         ]}
       >
-        <Input/>
+        <Select
+          showSearch
+          placeholder="选择一个账户"
+
+          onChange={onAccountChange}
+          onSearch={onAccountSearch}
+
+          defaultValue={"000"}
+          options={accountList}
+        />
       </Form.Item>
 
       <Form.Item

@@ -19,6 +19,9 @@ public class TxType {
      */
     private Integer isLeaf;
 
+    /**
+     * 0-收入 1-支出 2-账户
+     */
     private Integer kind;
 
 }

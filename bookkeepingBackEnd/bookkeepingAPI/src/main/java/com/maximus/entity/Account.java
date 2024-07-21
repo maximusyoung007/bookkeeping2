@@ -2,13 +2,19 @@ package com.maximus.entity;
 
 import lombok.Data;
 
+/**
+ * @author maximusyoung
+ */
 @Data
 public class Account {
     //账户编号
     private String accountNo;
 
+    //账户名称
+    private String accountName;
+
     //主账户编号
-    private String primaryAccountNo;
+    //private String primaryAccountNo;
 
     //用户Id
     private String userId;
@@ -20,10 +26,10 @@ public class Account {
     private String updateTime;
 
     //余额（净资产）
-    private Long balance;
+    private String balance;
 
     //总资产
-    private Long property;
+    //private Long property;
 
     //账户类型
     private String accountType;

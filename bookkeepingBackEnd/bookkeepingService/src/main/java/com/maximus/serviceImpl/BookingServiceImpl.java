@@ -1,11 +1,9 @@
 package com.maximus.serviceImpl;
 
-import com.maximus.dao.BookingDao;
 import com.maximus.entity.Booking;
 import com.maximus.mapper.BookingMapper;
 import com.maximus.service.BookingService;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 

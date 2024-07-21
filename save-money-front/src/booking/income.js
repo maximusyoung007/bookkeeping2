@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, InputNumber, TreeSelect, Divider, Modal, DatePicker, message} from 'antd';
+import {Button, Form, Input, InputNumber, TreeSelect, Divider, Modal, DatePicker, message, Select} from 'antd';
 import TxType from "./txType";
 import api from "../api";
 
@@ -37,18 +37,17 @@ const InCome = ({onClose}) => {
 
   let categories = [];
   let subCategories = [];
-  // let txTypeData = [];
 
-  const [txTypeData, setTxTypeData] = useState()
+  let options = [{value:"000", label:"默认不关联账户"}];
+
+  const [txTypeData, setTxTypeData] = useState();
+  const [accountList, setAccountList] = useState();
 
   useEffect(() => {
-    console.log("txTypeUseEffect");
     api.post("/txType/getTxType", {
       kind: 0,
     }).then(function (response) {
       // setData(response.data[0]);
-      console.log(response);
-      console.log(response.data[0])
       //setData(response.data)
       let dataArray = response.data;
       dataArray.forEach(function (item) {
@@ -70,24 +69,38 @@ const InCome = ({onClose}) => {
 
         return acc;
       }, []);
-      console.log(categories)
-      console.log(subCategories)
-      console.log("txType2:" + txTypeData)
       setTxTypeData(temp)
+    })
+
+    api.post("/account/getAccount", {
+
+    }).then(function (response) {
+      response.data.list.forEach(function (item) {
+        options.push({value: item.accountNo, label: item.accountName})
+      })
+      setAccountList(options)
     })
   }, [])
   const [treeValue, setValue] = useState();
   const [modalOpen2, setModalOpen2] = useState(false);
 
   const onChange = (newValue) => {
-    console.log(newValue);
     setValue(newValue);
+  };
+
+
+  const onAccountChange = (value) => {
+    console.log(`selected ${value}`);
+  };
+  const onAccountSearch = (value) => {
+    console.log('search:', value);
   };
   const [form] = Form.useForm();
   const onFinish = (values) => {
+    console.log("values:" + values)
     api.post("/booking/addBooking", {
       txType: values.txType,
-      accountNumber: values.accountNumber,
+      accountNo: values.accountNumber,
       amount: values.amount,
       counterparty: values.counterparty,
       goodsName: values.goodsName,
@@ -103,9 +116,6 @@ const InCome = ({onClose}) => {
     }).catch(function (error) {
       message.error("请求异常：" + error);
     })
-    // console.log('Received values of form: ', values);
-    // console.log(values['date-picker'].format('YYYY-MM-DD'));
-    // onClose();
   };
 
   const dropdownRender = (txTypeData) => (
@@ -136,7 +146,7 @@ const InCome = ({onClose}) => {
       <Form
         {...formItemLayout}
         form={form}
-        name="register"
+        name="income"
         onFinish={onFinish}
         initialValues={{
           prefix: '86',
@@ -198,16 +208,25 @@ const InCome = ({onClose}) => {
 
         <Form.Item
           name="accountNumber"
-          label="账户号码"
+          label="账户"
           rules={[
             {
               required: true,
-              message: '请输入这笔支出的账户',
+              message: '请输入这笔收入的账户',
               whitespace: true,
             },
           ]}
         >
-          <Input/>
+          <Select
+            showSearch
+            placeholder="选择一个账户"
+
+            onChange={onAccountChange}
+            onSearch={onAccountSearch}
+
+            defaultValue={"000"}
+            options={accountList}
+          />
         </Form.Item>
 
         <Form.Item
