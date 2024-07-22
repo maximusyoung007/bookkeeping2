@@ -63,7 +63,7 @@ public class TxTypeController {
                 }
                 TxType txType = new TxType();
                 txType.setId(UUID.randomUUID().toString());
-                txType.setFatherId(txType.getFatherId());
+                txType.setFatherId(txType.getId());
                 txType.setIsLeaf(0);
                 txType.setName(txTypeVO.getName());
                 txType.setKind(txTypeVO.getKind());

@@ -7,7 +7,7 @@ import lombok.Data;
  */
 @Data
 public class BookingVO {
-    private String accountNumber;
+    private String accountNo;
 
     private Double amount;
 

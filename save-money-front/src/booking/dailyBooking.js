@@ -42,7 +42,7 @@ const DailyBooking = () => {
               // ]}
             >
               <List.Item.Meta
-                title={item.txTypeName} style={{right: 20}}
+                title={item.goodsName} style={{right: 20}}
               />
               <div>{item.inOrOut == 1 ? "-¥" + item.amount : "+¥" + item.amount}</div>
             </List.Item>

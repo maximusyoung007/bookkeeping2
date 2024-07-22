@@ -3,12 +3,14 @@ package com.maximus.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.maximus.SystemEnvironment;
 import com.maximus.VO.BookingVO;
+import com.maximus.dao.BookingDAO;
 import com.maximus.entity.Booking;
 import com.maximus.entity.Result;
 import com.maximus.entity.TxType;
 import com.maximus.mapper.BookingMapper;
 import com.maximus.mapper.TxTypeMapper;
 import com.maximus.service.BookingService;
+import org.apache.dubbo.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,13 +43,24 @@ public class BookingController {
     @Resource
     private BookingService bookingService;
 
+    @Resource
+    private BookingDAO bookingDAO;
+
     @PostMapping("addBooking")
     public Result addBooking(@RequestBody BookingVO bookingVO) {
         try {
             Booking booking = generateBooking(bookingVO);
 
-            int count = bookingService.recordOne(booking);
-            if (count == 1) {
+            if (StringUtils.isEmpty(bookingVO.getAccountNo()) || "000".equals(bookingVO.getAccountNo())) {
+                booking.setAccountNo("000");
+                int count = bookingService.recordOne(booking);
+                if (count == 1) {
+                    return Result.success(count);
+                }
+            }
+
+            int count = bookingDAO.recordABook(booking);
+            if (count == 2) {
                 return Result.success(count);
             } else {
                 return Result.fail(2001, "系统内部异常");
@@ -77,7 +90,7 @@ public class BookingController {
         booking.setGoods(vo.getGoodsName());
         booking.setInorout(vo.getInOrOut());
         booking.setAmount(vo.getAmount());
-        booking.setAccountNo(vo.getAccountNumber());
+        booking.setAccountNo(vo.getAccountNo());
 
         return booking;
     }
@@ -101,6 +114,7 @@ public class BookingController {
                 vo.setTxType(booking.getTxType());
                 vo.setAmount(booking.getAmount());
                 vo.setInOrOut(booking.getInorout());
+                vo.setGoodsName(booking.getGoods());
                 voList.add(vo);
             }
 
