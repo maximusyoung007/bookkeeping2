@@ -33,7 +33,7 @@ const tailFormItemLayout = {
     },
   },
 };
-const Outcome = ({onClose}) => {
+const Outcome = () => {
 
   let categories = [];
   let subCategories = [];
@@ -118,7 +118,7 @@ const Outcome = ({onClose}) => {
       if (response.code == '2000') {
         message.success({
           content: '记账成功',
-        }).then(() => onClose());
+        });
       }
     }).catch(function (error) {
       message.error("请求异常：" + error);
