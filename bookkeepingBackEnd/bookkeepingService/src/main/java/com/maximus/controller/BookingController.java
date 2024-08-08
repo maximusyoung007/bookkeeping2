@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,6 +105,8 @@ public class BookingController {
             List<Booking> bookingList = bookingMapper.selectByMap(queryMap);
 
             List<BookingVO> voList = new ArrayList<>();
+            BigDecimal income = new BigDecimal("0.00");
+            BigDecimal outCome = new BigDecimal("0.00");
             for (Booking booking : bookingList) {
                 BookingVO vo = new BookingVO();
                 if (booking.getSubTxType() != null) {
@@ -112,11 +115,26 @@ public class BookingController {
                     vo.setTxTypeName(SystemEnvironment.TX_TYPE_MAP.get(booking.getTxType()));
                 }
                 vo.setTxType(booking.getTxType());
+
+                Double amount = booking.getAmount();
+                BigDecimal amountDecimal = new BigDecimal(amount);
+                if ("0".equals(booking.getInorout())) {
+                    income.add(amountDecimal);
+                } else if ("1".equals(booking.getInorout())) {
+                    outCome.add(amountDecimal);
+                }
+
                 vo.setAmount(booking.getAmount());
+
                 vo.setInOrOut(booking.getInorout());
                 vo.setGoodsName(booking.getGoods());
                 voList.add(vo);
             }
+
+            Map<String, Object> res = new HashMap<>();
+            res.put("bookingVOList", voList);
+            res.put("income", income);
+            res.put("outcome", outCome);
 
             return Result.success(voList);
         } catch (Exception e) {

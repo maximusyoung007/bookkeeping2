@@ -10,9 +10,9 @@ import org.apache.ibatis.annotations.Update;
  */
 public interface AccountMapper extends BaseMapper<Account> {
 
-    default int updateAmount(String accountNo, String amount) {
+    default int updateAmount(String accountNo, String balance) {
         LambdaUpdateWrapper<Account> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.setSql("balance = balance - " + amount);
+        updateWrapper.setSql("balance = " + balance);
         updateWrapper.eq(Account::getAccountNo, accountNo);
         return this.update(null, updateWrapper);
     }
