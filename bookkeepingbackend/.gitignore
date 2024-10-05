@@ -2,3 +2,6 @@
 /bookkeepingService/bookkeepingService.iml
 /bookkeepingUser/bookkeepingUser.iml
 /bookkeepingBackEnd.iml
+
+.idea
+/.idea/

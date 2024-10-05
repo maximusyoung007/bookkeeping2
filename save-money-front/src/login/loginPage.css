@@ -1,0 +1,59 @@
+body {
+    background: #f5f7ff;
+    font-size: 80%;
+}
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+    height: 90vh;
+    overflow: auto;
+    background: #f5f7ff;
+}
+#loginBox::before {
+    content: '';
+    background-image: url("pageImageLeft.png");
+    background-size: 207px 614px;
+    height: 614px;
+    top: 72px;
+    width: 207px;
+    left: 0;
+    position: absolute;
+}
+#loginBox::after {
+    content: '';
+    background-image: url("loginImageRight.png");
+    background-size: 207px 614px;
+    height: 614px;
+    top: 72px;
+    width: 207px;
+    position: absolute;
+    right: 0;
+}
+.loginCard{
+    width: 30%;
+    padding: 20px;
+    overflow: auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 12px 18px 2px rgba(34,0,51,.04),0 6px 22px 4px rgba(7,48,114,.12),0 6px 10px -4px rgba(14,13,26,.12);
+}
+input {
+    border-radius: 8px;
+}
+.loginTips{
+    font-size: 24px;
+    font-weight: 400;
+    color: #20123b;
+    line-height: 26px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+/*.ant-menu-submenu > .ant-menu {*/
+/*    background-color: rgb(247,247,247);*/
+/*}*/
+/*.ant-menu {*/
+/*    background-color: rgb(247,247,247);*/
+/*}*/
